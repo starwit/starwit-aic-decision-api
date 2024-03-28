@@ -1,0 +1,190 @@
+openapi: 3.0.2
+info:
+  description: "This API is part of project AI cockpit. \n\nFor more details see:\
+    \ TODO\n"
+  title: AI Cockpit Decisions
+  version: 0.0.1
+servers:
+- url: http://localhost:8080/v0
+paths:
+  /info:
+    get:
+      description: "shall deliver info on interface version and hosting system, readonly"
+      operationId: getInfo
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Info'
+                type: array
+          description: base info
+      x-accepts: application/json
+  /decision:
+    get:
+      description: get all decisions in this system
+      operationId: getAllDecisions
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Decision'
+                type: array
+          description: list all decisions in this system
+      x-accepts: application/json
+    post:
+      description: create a decisions config in this system
+      operationId: createDecision
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Decision'
+        description: Decision test to be created
+        required: true
+      responses:
+        "200":
+          description: create new decision
+      x-content-type: application/json
+      x-accepts: application/json
+  /decision/{id}:
+    put:
+      description: update a Decision
+      operationId: updateDecision
+      parameters:
+      - description: Numeric ID of decision to be updated
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Decision'
+        description: Decision to be updated
+        required: true
+      responses:
+        "200":
+          description: update a decision
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  schemas:
+    Info:
+      example:
+        apiVersion: apiVersion
+        usedModel:
+          publicTrainingData: true
+          modelLink: https://openapi-generator.tech
+          name: name
+          linkToPublicTrainingData: https://openapi-generator.tech
+          lastDeployment: 2000-01-23T04:56:07.000+00:00
+          modelType: null
+          version: version
+        generationDate: 2000-01-23T04:56:07.000+00:00
+        systemDescription: systemDescription
+      properties:
+        generationDate:
+          description: Last date this interface was updated.
+          format: date-time
+          type: string
+        systemDescription:
+          description: additional info for this system
+          type: string
+        apiVersion:
+          type: string
+        usedModel:
+          $ref: '#/components/schemas/DecisionModel'
+      type: object
+    DecisionModel:
+      example:
+        publicTrainingData: true
+        modelLink: https://openapi-generator.tech
+        name: name
+        linkToPublicTrainingData: https://openapi-generator.tech
+        lastDeployment: 2000-01-23T04:56:07.000+00:00
+        modelType: null
+        version: version
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        lastDeployment:
+          format: date-time
+          type: string
+        modelType:
+          $ref: '#/components/schemas/ModelType'
+        modelLink:
+          description: Link to model documentation
+          format: uri
+          type: string
+        publicTrainingData:
+          description: Is model based on public training data?
+          type: boolean
+        linkToPublicTrainingData:
+          description: Link to public training data / documentation.
+          format: uri
+          type: string
+      type: object
+    ModelType:
+      enum:
+      - LLM
+      - ComputerVision
+      - RuleBased
+      - Misc
+      type: string
+    Decision:
+      example:
+        autonomyLevel: null
+        followingDecisions:
+        - id: 0
+          name: NextDecision
+          uuid: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          autonomyLevel: autonomous
+        - id: 1
+          name: AnotherDecision
+          uuid: 3fa85f64-4417-4562-b3fc-2c963f66afa6
+          autonomyLevel: proposalOnly
+        name: name
+        id: 0
+        uuid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        uuid:
+          description: Globally unique ID
+          format: uuid
+          type: string
+        autonomyLevel:
+          $ref: '#/components/schemas/AutonomyLevel'
+        followingDecisions:
+          description: Decisions that use output of this decisions. Can be null
+          example:
+          - id: 0
+            name: NextDecision
+            uuid: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            autonomyLevel: autonomous
+          - id: 1
+            name: AnotherDecision
+            uuid: 3fa85f64-4417-4562-b3fc-2c963f66afa6
+            autonomyLevel: proposalOnly
+          items:
+            $ref: '#/components/schemas/Decision'
+          type: array
+      type: object
+    AutonomyLevel:
+      enum:
+      - autonomous
+      - proposalOnly
+      - disabled
+      type: string
