@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-28T20:47:24.051824173+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-29T16:53:49.325314827+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "decision", description = "the decision API")
 public interface DecisionApi {
@@ -108,18 +108,61 @@ public interface DecisionApi {
 
 
     /**
+     * GET /decision/{id}
+     * get decisions by id
+     *
+     * @param id Numeric ID of decision to load (required)
+     * @return returns decisions by id (status code 200)
+     *         or A decision with the specified ID was not found. (status code 404)
+     */
+    @Operation(
+        operationId = "getDecisionsById",
+        description = "get decisions by id",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "returns decisions by id", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Decision.class)))
+            }),
+            @ApiResponse(responseCode = "404", description = "A decision with the specified ID was not found.")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/decision/{id}",
+        produces = { "application/json" }
+    )
+    
+    default ResponseEntity<List<Decision>> getDecisionsById(
+        @Parameter(name = "id", description = "Numeric ID of decision to load", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "[ { \"followingDecisions\" : [ { \"id\" : 0, \"name\" : \"NextDecision\", \"uuid\" : \"3fa85f64-5717-4562-b3fc-2c963f66afa6\", \"autonomyLevel\" : \"autonomous\" }, { \"id\" : 1, \"name\" : \"AnotherDecision\", \"uuid\" : \"3fa85f64-4417-4562-b3fc-2c963f66afa6\", \"autonomyLevel\" : \"proposalOnly\" } ], \"name\" : \"name\", \"id\" : 0, \"uuid\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, { \"followingDecisions\" : [ { \"id\" : 0, \"name\" : \"NextDecision\", \"uuid\" : \"3fa85f64-5717-4562-b3fc-2c963f66afa6\", \"autonomyLevel\" : \"autonomous\" }, { \"id\" : 1, \"name\" : \"AnotherDecision\", \"uuid\" : \"3fa85f64-4417-4562-b3fc-2c963f66afa6\", \"autonomyLevel\" : \"proposalOnly\" } ], \"name\" : \"name\", \"id\" : 0, \"uuid\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" } ]";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
      * PUT /decision/{id}
      * update a Decision
      *
      * @param id Numeric ID of decision to be updated (required)
      * @param decision Decision to be updated (required)
      * @return update a decision (status code 200)
+     *         or A decision with the specified ID was not found. (status code 404)
      */
     @Operation(
         operationId = "updateDecision",
         description = "update a Decision",
         responses = {
-            @ApiResponse(responseCode = "200", description = "update a decision")
+            @ApiResponse(responseCode = "200", description = "update a decision"),
+            @ApiResponse(responseCode = "404", description = "A decision with the specified ID was not found.")
         }
     )
     @RequestMapping(

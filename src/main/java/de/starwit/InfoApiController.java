@@ -1,37 +1,51 @@
 package de.starwit;
 
-import de.starwit.aicockpit.Info;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+import de.starwit.aicockpit.DecisionModel;
+import de.starwit.aicockpit.Info;
+import de.starwit.aicockpit.ModelType;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-28T20:47:24.051824173+01:00[Europe/Berlin]")
 @Controller
 @RequestMapping("${openapi.aICockpitDecisions.base-path:/v0}")
 public class InfoApiController implements InfoApi {
 
     private final NativeWebRequest request;
+
+    static final Logger LOG = LoggerFactory.getLogger(InfoApiController.class); 
+
+    @Override
+    public ResponseEntity<List<Info>> getInfo() {
+        ArrayList<Info> result = new ArrayList<>();
+        Info i = new Info();
+        i.setApiVersion("0.0.1");
+        i.setGenerationDate(OffsetDateTime.now(ZoneOffset.of("+01:00")));
+        i.setSystemDescription("A traffic management system");
+        DecisionModel m = new DecisionModel();
+        m.setLastDeployment(OffsetDateTime.now(ZoneOffset.of("+01:00")));
+        m.setModelType(ModelType.COMPUTERVISION);
+        m.setName("Yolov8");
+        m.setPublicTrainingData(true);
+        m.setLinkToPublicTrainingData(URI.create("https://starwit-technologies.de/"));        
+        m.setVersion("2.0.0");
+        i.setUsedModel(m);
+        result.add(i);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
     @Autowired
     public InfoApiController(NativeWebRequest request) {
