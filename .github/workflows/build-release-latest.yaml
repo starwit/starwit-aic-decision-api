@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    name: "Build and publish with build number"
+    name: "Build and publish with build number. Also pushes to latest tag"
     runs-on: [self-hosted, linux, X64]
 
     steps:
@@ -53,3 +53,11 @@ jobs:
         file: ./dockerfile
         push: true
         tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.VERSION_BUILD }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./dockerfile
+        push: true
+        tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:latest
