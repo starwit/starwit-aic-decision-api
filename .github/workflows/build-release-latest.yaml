@@ -78,7 +78,7 @@ jobs:
         working-directory: deployment/aic-decision
         run: helm dep update
       - name: run helm package
-        working-directory: deployment/helm
+        working-directory: deployment
         run: helm package starwit-aicapi-decision
       - name: get version number
         working-directory: deployment/aic-decision
