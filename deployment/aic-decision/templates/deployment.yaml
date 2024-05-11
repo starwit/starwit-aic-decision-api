@@ -57,11 +57,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /{{ .Values.app.context_path }}
+              path: {{ .Values.app.context_path }}
               port: http
           readinessProbe:
             httpGet:
-              path: /{{ .Values.app.context_path }}
+              path: {{ .Values.app.context_path }}
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
