@@ -1,5 +1,5 @@
 apiVersion: v2
-name: starwit-aicapi-decision
+name: starwit-aicapi-decision-chart
 description: A Helm chart for Starwit's Decision API
 
 type: application
