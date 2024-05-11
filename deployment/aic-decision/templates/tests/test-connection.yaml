@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "aic-decision.fullname" . }}-test-connection"
+  labels:
+    {{- include "aic-decision.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "aic-decision.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
